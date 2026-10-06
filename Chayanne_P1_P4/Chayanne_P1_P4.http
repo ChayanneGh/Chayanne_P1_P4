@@ -1,0 +1,6 @@
+@Chayanne_P1_P4_HostAddress = http://localhost:5092
+
+GET {{Chayanne_P1_P4_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
