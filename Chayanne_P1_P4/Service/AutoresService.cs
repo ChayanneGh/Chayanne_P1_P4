@@ -6,7 +6,7 @@ namespace Chayanne_P1_P4.Service;
 public class AutoresService(IConfiguration configuration)
 {
     //private readonly string _conectionString;
-    private SqliteConnection createConection => new SqliteConnection("SqliteConnection");
+    private SqliteConnection createConection => new SqliteConnection( configuration.GetConnectionString("SqliteConnection"));
 
     public async Task<bool> InitializeAsync()
     {
