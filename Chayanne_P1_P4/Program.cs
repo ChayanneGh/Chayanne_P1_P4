@@ -4,7 +4,6 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<AutoresService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -15,10 +14,6 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 //Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-
-}
 
 using (var scope = app.Services.CreateScope()) //inicializa DbSqlite_Ds y crea la tabla Numeros si no existe
 {
