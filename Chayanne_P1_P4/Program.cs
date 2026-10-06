@@ -1,4 +1,5 @@
 using Chayanne_P1_P4.Service;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 using (var scope = app.Services.CreateScope()) //inicializa DbSqlite_Ds y crea la tabla Numeros si no existe
