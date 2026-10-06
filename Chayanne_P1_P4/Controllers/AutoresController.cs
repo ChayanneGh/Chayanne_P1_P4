@@ -6,6 +6,7 @@ namespace Chayanne_P1_P4.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Produces("application/json")]
 public class AutoresController(AutoresService autoresService) : ControllerBase
 {
 
