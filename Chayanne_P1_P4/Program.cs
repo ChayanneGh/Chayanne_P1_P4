@@ -1,17 +1,26 @@
+using Chayanne_P1_P4.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<AutoresService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.MapOpenApi();
+//}
+
+using (var scope = app.Services.CreateScope()) //inicializa DbSqlite_Ds y crea la tabla Numeros si no existe
 {
-    app.MapOpenApi();
+    var svc = scope.ServiceProvider.GetRequiredService<AutoresService>();
+    await svc.InitializeAsync();
 }
 
 app.UseHttpsRedirection();
