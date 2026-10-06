@@ -10,55 +10,34 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
 {
     private readonly AutoresService _autoresService = autoresService;
 
-    [HttpPost]
-    public async Task<string> autoresPost(AutorSet autor)
-    {
-        if (!await _autoresService.CreateAsync(autor))
-        {
-            throw new Exception("No se pudo crear el autor");
-        }
-        return "Autor creado exitosamente";
-    }
-
-    [HttpPut("{id}")]
-    public async Task<string> autoresPut(int id, AutorSet autor)
-    {
-        if (!await _autoresService.UpdateAsync(id, autor))
-        {
-            throw new Exception("No se pudo actualizar el autor");
-        }
-        return "Autor actualizado exitosamente";
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<string> autoresDelete(int id)
-    {
-        if (!await _autoresService.DeletAsync(id))
-        {
-            throw new Exception("No se pudo eliminar el autor");
-        }
-        return "Autor eliminado exitosamente";
-    }
-
     [HttpGet]
-    public async Task<EnumerableQuery<AutorGet>> autoresGet()
+    public async Task<List<AutorGet>> autoresGet()
     {
-        var tabla = await _autoresService.GetAsync();
-        if (tabla == null)
-        {
-            throw new Exception("No se encontraron autores");
-        }
-        return tabla;
+        // Retorna la lista directamente; .NET la convierte a JSON automáticamente
+        return await _autoresService.GetAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<AutorGet> autoresGetId(int id)
+    public async Task<AutorGet?> autoresGetId(int id)
     {
-        var autor = await _autoresService.GetIdAsync(id);
-        if (autor == null)
-        {
-            throw new Exception($"No se encontró el autor con Id {id}");
-        }
-        return autor;
+        return await _autoresService.GetIdAsync(id);
+    }
+
+    [HttpPost]
+    public async Task<bool> autoresPost(AutorSet autor)
+    {
+        return await _autoresService.CreateAsync(autor);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<bool> autoresPut(int id, AutorSet autor)
+    {
+        return await _autoresService.UpdateAsync(id, autor);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<bool> autoresDelete(int id)
+    {
+        return await _autoresService.DeletAsync(id);
     }
 }
