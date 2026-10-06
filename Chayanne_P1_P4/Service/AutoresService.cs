@@ -1,13 +1,12 @@
-﻿using System.Reflection.Metadata;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.Sqlite;
 using Chayanne_P1_P4.Models;
 namespace Chayanne_P1_P4.Service;
 
 public class AutoresService (IConfiguration configuration)
 {
-    private readonly string _conectionString;
-    private SqliteConnection createConection => new SqliteConnection(_conectionString);
+    //private readonly string _conectionString;
+    private SqliteConnection createConection => new SqliteConnection("SqliteConnection");
 
     public async Task<bool> InitializeAsync()
     {
