@@ -1,5 +1,5 @@
-﻿using Chayanne_P1_P4.Service;
-using Chayanne_P1_P4.Models;
+﻿using Chayanne_P1_P4.Models;
+using Chayanne_P1_P4.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chayanne_P1_P4.Controllers;
@@ -50,7 +50,7 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
         }
         return tabla;
     }
-    
+
     [HttpGet("{id}")]
     public async Task<AutorGet> autoresGetId(int id)
     {

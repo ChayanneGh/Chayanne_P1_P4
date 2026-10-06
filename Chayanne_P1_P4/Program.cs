@@ -11,11 +11,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.MapOpenApi();
-//}
+//Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 using (var scope = app.Services.CreateScope()) //inicializa DbSqlite_Ds y crea la tabla Numeros si no existe
 {

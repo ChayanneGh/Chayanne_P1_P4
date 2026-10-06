@@ -1,9 +1,9 @@
-﻿using Dapper;
+﻿using Chayanne_P1_P4.Models;
+using Dapper;
 using Microsoft.Data.Sqlite;
-using Chayanne_P1_P4.Models;
 namespace Chayanne_P1_P4.Service;
 
-public class AutoresService (IConfiguration configuration)
+public class AutoresService(IConfiguration configuration)
 {
     //private readonly string _conectionString;
     private SqliteConnection createConection => new SqliteConnection("SqliteConnection");
@@ -39,7 +39,8 @@ public class AutoresService (IConfiguration configuration)
                             " WHERE Id = @Id";
         using var coneccion = createConection;
         var resultado = await coneccion.ExecuteAsync(svc,
-            new { 
+            new
+            {
                 Id = Id,
                 Nombres = autor.Nombres,
                 Nacionalidad = autor.Nacionalidad,
