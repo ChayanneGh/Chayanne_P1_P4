@@ -62,12 +62,11 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<List<AutorGet>> GetAsync()
     {
-        // Corregido: Agregado alias 'Id AS IdAutor' para que Dapper mapée correctamente tu record
-        const string svc = "SELECT Id AS IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
+        const string svc = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
         using var coneccion = createConection;
 
         var resultado = await coneccion.QueryAsync<AutorGet>(svc);
-        List<AutorGet> tabla = resultado.ToList(); // Corregido: Conversión explícita a List
+        List<AutorGet> tabla = resultado.ToList();
 
         if (tabla == null || !tabla.Any())
         {
@@ -78,8 +77,7 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<AutorGet?> GetIdAsync(int id)
     {
-        // Corregido: Agregado alias aquí también
-        const string svc = @"SELECT Id AS IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
+        const string svc = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
         using var coneccion = createConection;
         return await coneccion.QueryFirstOrDefaultAsync<AutorGet>(svc, new { Id = id });
     }
