@@ -1,8 +1,6 @@
 ﻿using Chayanne_P1_P4.Service;
 using Chayanne_P1_P4.Models;
-using Chayanne_P1_P4.Service;
 using Microsoft.AspNetCore.Mvc;
-using System.Formats.Asn1;
 
 namespace Chayanne_P1_P4.Controllers;
 
@@ -13,7 +11,7 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
     private readonly AutoresService _autoresService = autoresService;
 
     [HttpPost]
-    public async Task<string> autores(AutorSet autor)
+    public async Task<string> autoresPost(AutorSet autor)
     {
         if (!await _autoresService.CreateAsync(autor))
         {
@@ -22,8 +20,8 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
         return "Autor creado exitosamente";
     }
 
-    [HttpPut]
-    public async Task<string> autores(int id, AutorSet autor)
+    [HttpPut("{id}")]
+    public async Task<string> autoresPut(int id, AutorSet autor)
     {
         if (!await _autoresService.UpdateAsync(id, autor))
         {
@@ -32,10 +30,18 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
         return "Autor actualizado exitosamente";
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
+    public async Task<string> autoresDelete(int id)
+    {
+        if (!await _autoresService.DeletAsync(id))
+        {
+            throw new Exception("No se pudo eliminar el autor");
+        }
+        return "Autor eliminado exitosamente";
+    }
 
     [HttpGet]
-    public async Task<EnumerableQuery<AutorGet>> autores()
+    public async Task<EnumerableQuery<AutorGet>> autoresGet()
     {
         var tabla = await _autoresService.GetAsync();
         if (tabla == null)
@@ -46,7 +52,7 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public async Task<AutorGet> autores(int id)
+    public async Task<AutorGet> autoresGetId(int id)
     {
         var autor = await _autoresService.GetIdAsync(id);
         if (autor == null)
