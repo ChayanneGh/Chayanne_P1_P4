@@ -54,7 +54,7 @@ public class AutoresService(IConfiguration configuration)
     public async Task<bool> DeletAsync(int Id)
     {
         // Corregido para sintaxis SQLite estándar
-        const string query = "DELETE FROM Autores WHERE Id = @Id";
+        const string query = "DELETE FROM Autores WHERE IdAutor = @Id";
         using var coneccion = createConection;
         var resultado = await coneccion.ExecuteAsync(query, new { Id = Id });
         return resultado > 0; // Devolverá true si eliminó 1 fila
@@ -62,7 +62,7 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<List<Autor>> GetAsync()
     {
-        const string query = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
+        const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
         using var coneccion = createConection;
 
         var resultado = await coneccion.QueryAsync<Autor>(query);
@@ -77,7 +77,7 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<Autor?> GetIdAsync(int id)
     {
-        const string query = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
+        const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
         using var coneccion = createConection;
         return await coneccion.QueryFirstOrDefaultAsync<Autor>(query, new { Id = id });
     }
