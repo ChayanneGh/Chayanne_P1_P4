@@ -11,35 +11,41 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<List<Autor>> autoresGet()
+    public async Task<ActionResult<List<Autor>>> autoresGet()
     {
-        return await autoresService.GetAsync();
+        var lista = await autoresService.GetAsync();
+        return Ok(lista);
     }
 
     [HttpGet("{id}")]
-    public async Task<Autor?> autoresGetId(int id)
+    public async Task<ActionResult<Autor>> autoresGetId(int id)
     {
-        return await autoresService.GetIdAsync(id);
+        var autor = await autoresService.GetIdAsync(id);
+        if (autor is null) return NotFound();
+        return Ok(autor);
     }
 
     [HttpPost]
-    public async Task<Autor> autoresPost([FromBody] Autor autor)
+    public async Task<ActionResult<Autor>> autoresPost([FromBody] Autor autor)
     {
-        await autoresService.CreateAsync(autor);
-        return autor;
+        var creado = await autoresService.CreateAsync(autor);
+        return CreatedAtAction(nameof(autoresGetId), new { id = creado.IdAutor }, creado);
     }
 
     [HttpPut("{id}")]
-    public async Task<string> autoresPut(int id, [FromBody] Autor autor)
+    public async Task<IActionResult> autoresPut(int id, [FromBody] Autor autor)
     {
-        string respuesta = await autoresService.UpdateAsync(id, autor)? "Actualizado correctamente" : "No se pudo actualizar";
-        return respuesta;
+        var actualizado = await autoresService.UpdateAsync(id, autor);
+        if (!actualizado) return NotFound(new { message = "No se pudo actualizar" });
+        // NoContent es correcto cuando la actualización fue exitosa y no devolvemos cuerpo
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<string> autoresDelete(int id)
+    public async Task<IActionResult> autoresDelete(int id)
     {
-        string respuesta = await autoresService.DeleteAsync(id)? "Eliminado correctamente" : "No se pudo eliminar";
-        return respuesta;
+        var eliminado = await autoresService.DeleteAsync(id);
+        if (!eliminado) return NotFound(new { message = "No se pudo eliminar" });
+        return NoContent();
     }
 }

@@ -24,25 +24,41 @@ public class AutoresService(IConfiguration configuration)
         return exists > 0;
     }
 
-    public async Task<bool> CreateAsync(Autor autor)
+    // Ahora devuelve el Autor con Id asignado
+    public async Task<Autor> CreateAsync(Autor autor)
     {
-        const string query = @"INSERT INTO Autores (Nombres, Nacionalidad, FechaNacimiento, Sueldo) " +
-                            "VALUES (@Nombres, @Nacionalidad, @FechaNacimiento, @Sueldo)";
+        const string query = @"INSERT INTO Autores (Nombres, Nacionalidad, FechaNacimiento, Sueldo) 
+                               VALUES (@Nombres, @Nacionalidad, @FechaNacimiento, @Sueldo);";
         using var coneccion = createConection;
-        var resultado = await coneccion.ExecuteAsync(query, autor);
-        return resultado > 0;
+        await coneccion.OpenAsync();
+
+        var resultado = await coneccion.ExecuteAsync(query, new
+        {
+            autor.Nombres,
+            autor.Nacionalidad,
+            autor.FechaNacimiento,
+            autor.Sueldo
+        });
+
+        if (resultado <= 0)
+            throw new Exception("No se pudo insertar el autor.");
+
+        // Obtener el id insertado
+        var id = await coneccion.ExecuteScalarAsync<long>("SELECT last_insert_rowid();");
+        return new Autor((int)id, autor.Nombres, autor.Nacionalidad, autor.FechaNacimiento, autor.Sueldo);
     }
 
     public async Task<bool> UpdateAsync(int Id, Autor autor)
     {
-        // Agregado espacio en blanco antes de Nombres para evitar errores de concatenación
+        // Corregido: usar la columna PK IdAutor
         const string query = "UPDATE Autores SET " +
                             "Nombres = @Nombres, " +
                             "Nacionalidad = @Nacionalidad, " +
                             "FechaNacimiento = @FechaNacimiento, " +
                             "Sueldo = @Sueldo " +
-                            "WHERE Id = @Id";
+                            "WHERE IdAutor = @Id";
         using var coneccion = createConection;
+        await coneccion.OpenAsync();
         var resultado = await coneccion.ExecuteAsync(query,
             new
             {
@@ -57,25 +73,23 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<bool> DeleteAsync(int Id)
     {
-        // Corregido para sintaxis SQLite estándar
         const string query = "DELETE FROM Autores WHERE IdAutor = @Id";
         using var coneccion = createConection;
+        await coneccion.OpenAsync();
         var resultado = await coneccion.ExecuteAsync(query, new { Id = Id });
-        return resultado > 0; // Devolverá true si eliminó 1 fila
+        return resultado > 0;
     }
 
     public async Task<List<Autor>> GetAsync()
     {
         const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
         using var coneccion = createConection;
+        await coneccion.OpenAsync();
 
         var resultado = await coneccion.QueryAsync<Autor>(query);
         var tabla = resultado.ToList();
 
-        if (!tabla.Any())
-        {
-            throw new Exception("No se encontraron autores");
-        }
+        // Devolver lista vacía si no hay filas (no lanzar excepción)
         return tabla;
     }
 
@@ -83,6 +97,7 @@ public class AutoresService(IConfiguration configuration)
     {
         const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE IdAutor = @Id";
         using var coneccion = createConection;
+        await coneccion.OpenAsync();
         return await coneccion.QueryFirstOrDefaultAsync<Autor>(query, new { Id = id });
     }
 }
