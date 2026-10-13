@@ -1,6 +1,7 @@
 ﻿using Chayanne_P1_P4.Models;
 using Dapper;
 using Microsoft.Data.Sqlite;
+
 namespace Chayanne_P1_P4.Service;
 
 public class AutoresService(IConfiguration configuration)
@@ -24,7 +25,6 @@ public class AutoresService(IConfiguration configuration)
         return exists > 0;
     }
 
-    // Ahora devuelve el Autor con Id asignado
     public async Task<Autor> CreateAsync(Autor autor)
     {
         const string query = @"INSERT INTO Autores (Nombres, Nacionalidad, FechaNacimiento, Sueldo) 
@@ -43,14 +43,13 @@ public class AutoresService(IConfiguration configuration)
         if (resultado <= 0)
             throw new Exception("No se pudo insertar el autor.");
 
-        // Obtener el id insertado
+        // Obtener el id insertado por la base de datos
         var id = await coneccion.ExecuteScalarAsync<long>("SELECT last_insert_rowid();");
         return new Autor((int)id, autor.Nombres, autor.Nacionalidad, autor.FechaNacimiento, autor.Sueldo);
     }
 
     public async Task<bool> UpdateAsync(int Id, Autor autor)
     {
-        // Corregido: usar la columna PK IdAutor
         const string query = "UPDATE Autores SET " +
                             "Nombres = @Nombres, " +
                             "Nacionalidad = @Nacionalidad, " +
@@ -87,10 +86,7 @@ public class AutoresService(IConfiguration configuration)
         await coneccion.OpenAsync();
 
         var resultado = await coneccion.QueryAsync<Autor>(query);
-        var tabla = resultado.ToList();
-
-        // Devolver lista vacía si no hay filas (no lanzar excepción)
-        return tabla;
+        return resultado.ToList();
     }
 
     public async Task<Autor?> GetIdAsync(int id)

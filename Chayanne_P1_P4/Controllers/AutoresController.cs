@@ -9,6 +9,8 @@ namespace Chayanne_P1_P4.Controllers;
 [Produces("application/json")]
 public class AutoresController(AutoresService autoresService) : ControllerBase
 {
+    // DTO de entrada para evitar problemas con el ID autoincrementable en POST/PUT
+    public record AutorRequest(string Nombres, string Nacionalidad, string FechaNacimiento, double Sueldo);
 
     [HttpGet]
     public async Task<ActionResult<List<Autor>>> autoresGet()
@@ -26,18 +28,23 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Autor>> autoresPost([FromBody] Autor autor)
+    public async Task<ActionResult<Autor>> autoresPost([FromBody] AutorRequest request)
     {
-        var creado = await autoresService.CreateAsync(autor);
+        // Mapeamos el request al modelo original Autor (con IdAutor en 0 para que la BD lo autogenere)
+        var autorNuevo = new Autor(0, request.Nombres, request.Nacionalidad, request.FechaNacimiento, request.Sueldo);
+
+        var creado = await autoresService.CreateAsync(autorNuevo);
         return CreatedAtAction(nameof(autoresGetId), new { id = creado.IdAutor }, creado);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> autoresPut(int id, [FromBody] Autor autor)
+    public async Task<IActionResult> autoresPut(int id, [FromBody] AutorRequest request)
     {
-        var actualizado = await autoresService.UpdateAsync(id, autor);
+        var autorActualizar = new Autor(id, request.Nombres, request.Nacionalidad, request.FechaNacimiento, request.Sueldo);
+
+        var actualizado = await autoresService.UpdateAsync(id, autorActualizar);
         if (!actualizado) return NotFound(new { message = "No se pudo actualizar" });
-        // NoContent es correcto cuando la actualización fue exitosa y no devolvemos cuerpo
+
         return NoContent();
     }
 
