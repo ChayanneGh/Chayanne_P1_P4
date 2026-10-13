@@ -32,7 +32,7 @@ public class AutoresService(IConfiguration configuration)
     public async Task<bool> UpdateAsync(int Id, AutorSet autor)
     {
         // Agregado espacio en blanco antes de Nombres para evitar errores de concatenación
-        const string query = "UPDATE Autores SET " +
+        const string query = "UPDATE TOP(1) Autores SET " +
                             "Nombres = @Nombres, " +
                             "Nacionalidad = @Nacionalidad, " +
                             "FechaNacimiento = @FechaNacimiento, " +
