@@ -23,13 +23,13 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<bool> autoresPost(AutorSet autor)
+    public async Task<bool> autoresPost([FromBody] AutorSet autor)
     {
         return await autoresService.CreateAsync(autor);
     }
 
     [HttpPut("{id}")]
-    public async Task<bool> autoresPut(int id, AutorSet autor)
+    public async Task<bool> autoresPut(int id, [FromBody] AutorSet autor)
     {
         return await autoresService.UpdateAsync(id, autor);
     }
