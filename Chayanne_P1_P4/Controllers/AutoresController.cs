@@ -30,14 +30,16 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<bool> autoresPut(int id, [FromBody] Autor autor)
+    public async Task<string> autoresPut(int id, [FromBody] Autor autor)
     {
-        return await autoresService.UpdateAsync(id, autor);
+        string respuesta = await autoresService.UpdateAsync(id, autor)? "Actualizado correctamente" : "No se pudo actualizar";
+        return respuesta;
     }
 
     [HttpDelete("{id}")]
-    public async Task<bool> autoresDelete(int id)
+    public async Task<string> autoresDelete(int id)
     {
-        return await autoresService.DeletAsync(id);
+        string respuesta = await autoresService.DeleteAsync(id)? "Eliminado correctamente" : "No se pudo eliminar";
+        return respuesta;
     }
 }

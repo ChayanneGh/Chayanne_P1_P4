@@ -9,15 +9,19 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<bool> InitializeAsync()
     {
-        const string query = @"CREATE TABLE IF NOT EXISTS Autores (" +
-                            "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        const string ddl = @"CREATE TABLE IF NOT EXISTS Autores (" +
+                            "IdAutor INTEGER PRIMARY KEY AUTOINCREMENT," +
                             "Nombres TEXT NOT NULL," +
                             "Nacionalidad TEXT NOT NULL," +
                             "FechaNacimiento TEXT NOT NULL," +
                             "Sueldo REAL NOT NULL)";
+
         using var coneccion = createConection;
-        var resultado = await coneccion.ExecuteAsync(query);
-        return resultado > 0;
+        await coneccion.OpenAsync();
+        await coneccion.ExecuteAsync(ddl);
+        const string existsQuery = "SELECT COUNT(1) FROM sqlite_master WHERE type='table' AND name = 'Autores';";
+        var exists = await coneccion.ExecuteScalarAsync<int>(existsQuery);
+        return exists > 0;
     }
 
     public async Task<bool> CreateAsync(Autor autor)
@@ -32,7 +36,7 @@ public class AutoresService(IConfiguration configuration)
     public async Task<bool> UpdateAsync(int Id, Autor autor)
     {
         // Agregado espacio en blanco antes de Nombres para evitar errores de concatenación
-        const string query = "UPDATE TOP(1) Autores SET " +
+        const string query = "UPDATE Autores SET " +
                             "Nombres = @Nombres, " +
                             "Nacionalidad = @Nacionalidad, " +
                             "FechaNacimiento = @FechaNacimiento, " +
@@ -51,7 +55,7 @@ public class AutoresService(IConfiguration configuration)
         return resultado > 0;
     }
 
-    public async Task<bool> DeletAsync(int Id)
+    public async Task<bool> DeleteAsync(int Id)
     {
         // Corregido para sintaxis SQLite estándar
         const string query = "DELETE FROM Autores WHERE IdAutor = @Id";
@@ -77,7 +81,7 @@ public class AutoresService(IConfiguration configuration)
 
     public async Task<Autor?> GetIdAsync(int id)
     {
-        const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
+        const string query = "SELECT IdAutor, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE IdAutor = @Id";
         using var coneccion = createConection;
         return await coneccion.QueryFirstOrDefaultAsync<Autor>(query, new { Id = id });
     }
