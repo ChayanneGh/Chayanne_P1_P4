@@ -20,7 +20,7 @@ public class AutoresService(IConfiguration configuration)
         return resultado > 0;
     }
 
-    public async Task<bool> CreateAsync(AutorSet autor)
+    public async Task<bool> CreateAsync(Autor autor)
     {
         const string query = @"INSERT INTO Autores (Nombres, Nacionalidad, FechaNacimiento, Sueldo) " +
                             "VALUES (@Nombres, @Nacionalidad, @FechaNacimiento, @Sueldo)";
@@ -29,7 +29,7 @@ public class AutoresService(IConfiguration configuration)
         return resultado > 0;
     }
 
-    public async Task<bool> UpdateAsync(int Id, AutorSet autor)
+    public async Task<bool> UpdateAsync(int Id, Autor autor)
     {
         // Agregado espacio en blanco antes de Nombres para evitar errores de concatenación
         const string query = "UPDATE TOP(1) Autores SET " +
@@ -60,12 +60,12 @@ public class AutoresService(IConfiguration configuration)
         return resultado > 0; // Devolverá true si eliminó 1 fila
     }
 
-    public async Task<List<AutorGet>> GetAsync()
+    public async Task<List<Autor>> GetAsync()
     {
         const string query = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores";
         using var coneccion = createConection;
 
-        var resultado = await coneccion.QueryAsync<AutorGet>(query);
+        var resultado = await coneccion.QueryAsync<Autor>(query);
         var tabla = resultado.ToList();
 
         if (!tabla.Any())
@@ -75,10 +75,10 @@ public class AutoresService(IConfiguration configuration)
         return tabla;
     }
 
-    public async Task<AutorGet?> GetIdAsync(int id)
+    public async Task<Autor?> GetIdAsync(int id)
     {
         const string query = "SELECT Id, Nombres, Nacionalidad, FechaNacimiento, Sueldo FROM Autores WHERE Id = @Id";
         using var coneccion = createConection;
-        return await coneccion.QueryFirstOrDefaultAsync<AutorGet>(query, new { Id = id });
+        return await coneccion.QueryFirstOrDefaultAsync<Autor>(query, new { Id = id });
     }
 }

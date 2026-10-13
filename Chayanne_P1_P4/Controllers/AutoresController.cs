@@ -11,25 +11,26 @@ public class AutoresController(AutoresService autoresService) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<List<AutorGet>> autoresGet()
+    public async Task<List<Autor>> autoresGet()
     {
         return await autoresService.GetAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<AutorGet?> autoresGetId(int id)
+    public async Task<Autor?> autoresGetId(int id)
     {
         return await autoresService.GetIdAsync(id);
     }
 
     [HttpPost]
-    public async Task<bool> autoresPost([FromBody] AutorSet autor)
+    public async Task<Autor> autoresPost([FromBody] Autor autor)
     {
-        return await autoresService.CreateAsync(autor);
+        await autoresService.CreateAsync(autor);
+        return autor;
     }
 
     [HttpPut("{id}")]
-    public async Task<bool> autoresPut(int id, [FromBody] AutorSet autor)
+    public async Task<bool> autoresPut(int id, [FromBody] Autor autor)
     {
         return await autoresService.UpdateAsync(id, autor);
     }
