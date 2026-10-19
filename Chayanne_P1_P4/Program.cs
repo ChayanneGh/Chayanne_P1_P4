@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddSingleton<SqliteConnetionFactory>();
 builder.Services.AddScoped<AutoresService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -18,7 +19,7 @@ app.MapScalarApiReference();
 // Configure the HTTP request pipeline.
 using (var scope = app.Services.CreateScope()) // Inicializa SQLite y crea la tabla Autores si no existe
 {
-    var svc = scope.ServiceProvider.GetRequiredService<AutoresService>();
+    var svc = scope.ServiceProvider.GetRequiredService<SqliteConnetionFactory>();
     await svc.InitializeAsync();
 }
 
